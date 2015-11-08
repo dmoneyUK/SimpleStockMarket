@@ -1,6 +1,7 @@
 package exercise.stock.market.service;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -99,7 +100,7 @@ public class StockMarketService {
 	 * Records a trade, with time stamp, quantity of shares, buy or sell
 	 * indicator and traded price.
 	 */
-	public void recordTrade(String symbol, Date timestamp, BigDecimal quantity, BuyOrSell indicator, BigDecimal price) {
+	public void recordTrade(String symbol, Date timestamp, BigInteger quantity, BuyOrSell indicator, BigDecimal price) {
 		Stock stock = findStockBySymbol(symbol);
 		if(stock==null){
 			return;
@@ -126,12 +127,14 @@ public class StockMarketService {
 			System.out.println("No trade record found in the last 15 minutes for the stock " + stock.getSymbol());
 		} else {
 			BigDecimal priceSum = BigDecimal.ZERO;
-			BigDecimal quantitySum = BigDecimal.ZERO;
+			BigInteger quantitySum = BigInteger.ZERO;
+			
 			for (TradeRecord record : tradeRecords) {
-				priceSum = priceSum.add(record.getPrice().multiply(record.getQuantity()));
+
+				priceSum = priceSum.add(record.getPrice().multiply(new BigDecimal(record.getQuantity())));
 				quantitySum = quantitySum.add(record.getQuantity());
 			}
-			result = priceSum.divide(quantitySum);
+			result = priceSum.divide(new BigDecimal(quantitySum));
 		}
 		return result;
 

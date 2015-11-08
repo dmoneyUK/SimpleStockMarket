@@ -6,7 +6,6 @@ import org.mockito.Mockito;
 
 import exercise.stock.market.test.TestUtils;
 import exercises.stock.exceptions.InvalidPriceException;
-import junit.extensions.TestSetup;
 
 import java.math.BigDecimal;
 

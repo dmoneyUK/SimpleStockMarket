@@ -23,6 +23,7 @@ public class TestUtils {
 	 * @return
 	 */
 	public static BigDecimal getRamdamBigDecimal() {
+
 		return new BigDecimal(Math.random() * 100000);
 	}
 
