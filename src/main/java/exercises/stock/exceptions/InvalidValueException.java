@@ -1,11 +1,11 @@
 package exercises.stock.exceptions;
 
 /**
- * An exception indicating the stock price is invalid.
+ * An exception indicating the a value is invalid.
  * @author DMONEY
  *
  */
-public class InvalidPriceException extends BusinessException {
+public class InvalidValueException extends BusinessException {
 
 	/**
 	 * Serialization id.
@@ -15,7 +15,7 @@ public class InvalidPriceException extends BusinessException {
 	/**
 	 * Constructor.
 	 */
-	public InvalidPriceException(String message){
+	public InvalidValueException(String message){
 		super(message);
 	}
 }

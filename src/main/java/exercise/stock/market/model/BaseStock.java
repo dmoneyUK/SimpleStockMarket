@@ -2,20 +2,16 @@ package exercise.stock.market.model;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import exercises.stock.exceptions.InvalidPriceException;
 
 /**
- * A model class of stock.
+ * A base class of stocks.
  * 
  * @author DMONEY
  *
  */
-public class AbstractStock {
+public class BaseStock {
 
 	/** The symbol of the stock. */
 	protected String symbol;
@@ -39,7 +35,7 @@ public class AbstractStock {
 	 * @param price
 	 * @param tradeRecords
 	 */
-	public AbstractStock(String symbol, BigDecimal lastDividend, BigDecimal parValue, BigDecimal price) {
+	public BaseStock(String symbol, BigDecimal lastDividend, BigDecimal parValue, BigDecimal price) {
 		this.symbol = symbol;
 		this.lastDividend = lastDividend;
 		this.parValue = parValue;
@@ -123,9 +119,6 @@ public class AbstractStock {
 	 * @param price the price to set
 	 */
 	public void setPrice(BigDecimal price) {
-		if (BigDecimal.ZERO.compareTo(price) >= 0) {
-			throw new InvalidPriceException(price + "is a invalid price for the stock " + this.symbol);
-		}
 		this.price = price;
 	}
 

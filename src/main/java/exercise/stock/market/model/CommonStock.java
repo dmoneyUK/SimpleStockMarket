@@ -8,7 +8,7 @@ import java.util.List;
  * @author DMONEY
  *
  */
-public class CommonStock extends AbstractStock{
+public class CommonStock extends BaseStock{
 
 	/**
 	 * Constructor.

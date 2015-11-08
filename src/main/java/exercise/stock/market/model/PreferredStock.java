@@ -2,7 +2,7 @@ package exercise.stock.market.model;
 
 import java.math.BigDecimal;
 
-public class PreferredStock extends AbstractStock{
+public class PreferredStock extends BaseStock{
 
 	/** The fixed dividend value. */
 	private BigDecimal fixedDividend;

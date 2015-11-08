@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import exercise.stock.market.model.AbstractStock;
+import exercise.stock.market.model.BaseStock;
 import exercise.stock.market.model.CommonStock;
 import exercise.stock.market.model.PreferredStock;
 import exercise.stock.market.model.TradeRecord;

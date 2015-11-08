@@ -1,5 +1,6 @@
 package exercises.stock.exceptions;
 
+
 public class BusinessException extends RuntimeException {
 	
 	/**

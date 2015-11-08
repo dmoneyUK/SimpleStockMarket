@@ -23,11 +23,11 @@ public class TestPreferredStock {
 	}
 
 	/**
-	 * Tests for {@link AbstractStock#getFixedDividend()} and
-	 * {@link AbstractStock#getFixedDividend()}.
+	 * Tests for {@link BaseStock#getFixedDividend()} and
+	 * {@link BaseStock#getFixedDividend()}.
 	 * <ul>
-	 * <li>call {@link AbstractStock#setFixedDividend(BigDecimal)}</li>
-	 * <li>verify that the {@link AbstractStock#getFixedDividend()} returns the
+	 * <li>call {@link BaseStock#setFixedDividend(BigDecimal)}</li>
+	 * <li>verify that the {@link BaseStock#getFixedDividend()} returns the
 	 * expected value</li>
 	 * </ul>
 	 */

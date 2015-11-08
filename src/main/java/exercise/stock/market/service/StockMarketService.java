@@ -12,12 +12,13 @@ import java.util.Map;
 import exercise.stock.market.model.BuyOrSell;
 import exercise.stock.market.model.CommonStock;
 import exercise.stock.market.model.PreferredStock;
-import exercise.stock.market.model.AbstractStock;
+import exercise.stock.market.model.BaseStock;
 import exercise.stock.market.model.TradeRecord;
 import exercises.stock.exceptions.BusinessException;
+import exercises.stock.exceptions.InvalidValueException;
 
 /**
- * A calculator that can calculate various values.
+ * A stock market service that manage stocks and trades information.
  * 
  * @author DMONEY
  *
@@ -25,27 +26,27 @@ import exercises.stock.exceptions.BusinessException;
 public class StockMarketService {
 
 	/** A stocks managed in this service. */
-	private Map<String, AbstractStock> stockMap;
+	private Map<String, BaseStock> stockMap;
 
 	/**
-	 * The percision scale in the calculation.
+	 * The precision scale in the calculation.
 	 */
-	private static final int PERCISION_SCALE = 7;
+	private static final int PRECISION_SCALE = 7;
 
 	/**
 	 * Constructor.
 	 */
 	public StockMarketService() {
-		this.stockMap = new HashMap<String, AbstractStock>();
+		this.stockMap = new HashMap<String, BaseStock>();
 	}
 
 	/**
-	 * Registers a stock to this service.
+	 * Registers a stock to this market service.
 	 * 
-	 * @param stock
+	 * @param stock the stock to be registered
 	 */
-	public void registerStock(AbstractStock stock) {
-		String errorMessage = "The stock " + stock.getSymbol() + " has been registerd.";
+	public void registerStock(BaseStock stock) {
+		String errorMessage = "The stock " + stock.getSymbol() + " has already been registerd.";
 		if (this.stockMap.containsKey(stock.getSymbol())) {
 			throw new BusinessException(errorMessage);
 		}
@@ -53,10 +54,9 @@ public class StockMarketService {
 	}
 
 	/**
-	 * Unregisters a stock from this service.
+	 * Unregisters a stock from this market service.
 	 * 
 	 * @param stockSymbol the symbol of the stock to be unregistered
-	 * @throws BusinessException thrown when the given stock not existing.
 	 */
 	public void unregisterStock(String stockSymbol) {
 		if (!this.stockMap.containsKey(stockSymbol)) {
@@ -67,35 +67,36 @@ public class StockMarketService {
 	}
 
 	/**
-	 * Retuns a map of stocks managed in this service.
+	 * Returns the stocks managed in this service.
 	 * 
 	 * @return the stockMap a {@link HashMap} containing the stocks managed in
 	 *         this service
 	 */
-	public Map<String, AbstractStock> getStockMap() {
-		return stockMap;
+	public Map<String, BaseStock> getStockMap() {
+		return this.stockMap;
 	}
 
 	/**
 	 * Calculates the dividend yield of the given stock based on the given
-	 * price. The result keeps precision scale is 3 and uses
+	 * price. The result precision scale is 3 and applies
 	 * {@link BigDecimal#ROUND_HALF_EVEN}.
 	 * 
 	 * @param symbol the symbol of the stock to be calculated
-	 * @param price the trade price
+	 * @param price the price used in calculation
 	 */
 	public BigDecimal getDividendYield(String symbol, BigDecimal price) {
-		AbstractStock stock = findStockBySymbol(symbol);
-		if (stock == null) {
-			return null;
-		}
+
+		BaseStock stock = findStockBySymbol(symbol);
+
+		checkPositive(price);
+
 		BigDecimal result = BigDecimal.ZERO;
 		if (stock instanceof CommonStock) {
 			CommonStock commonStock = (CommonStock) stock;
-			result = commonStock.getLastDividend().divide(price, PERCISION_SCALE, BigDecimal.ROUND_HALF_EVEN);
+			result = commonStock.getLastDividend().divide(price, PRECISION_SCALE, BigDecimal.ROUND_HALF_EVEN);
 		} else if (stock instanceof PreferredStock) {
 			PreferredStock preferredStock = (PreferredStock) stock;
-			result = preferredStock.getFixedDividend().multiply(stock.getParValue()).divide(price, 6,
+			result = preferredStock.getFixedDividend().multiply(stock.getParValue()).divide(price, PRECISION_SCALE,
 					BigDecimal.ROUND_HALF_EVEN);
 		}
 
@@ -104,23 +105,23 @@ public class StockMarketService {
 
 	/**
 	 * Calculates the P/E Ratio of the given stock based on the given price. The
-	 * result keeps precision scale is 3 and uses
+	 * result precision scale is 3 and applies
 	 * {@link BigDecimal#ROUND_HALF_EVEN}.
 	 * 
 	 * @param stock the stock to be calculated
 	 * @param price the trade price
 	 */
 	public BigDecimal getPERatio(String symbol, BigDecimal price) {
-		AbstractStock stock = findStockBySymbol(symbol);
-		if (stock == null) {
-			return null;
-		}
+		BaseStock stock = findStockBySymbol(symbol);
+
+		checkPositive(price);
+
 		BigDecimal result = BigDecimal.ZERO;
 		if (BigDecimal.ZERO.compareTo(stock.getLastDividend()) >= 0) {
 			throw new BusinessException(
 					"Cannot calculate P/E Ratio for the stock " + symbol + "since the dividend is ZERO.");
 		}
-		result = price.divide(stock.getLastDividend(), PERCISION_SCALE, BigDecimal.ROUND_HALF_EVEN);
+		result = price.divide(stock.getLastDividend(), PRECISION_SCALE, BigDecimal.ROUND_HALF_EVEN);
 		return result.setScale(3, BigDecimal.ROUND_HALF_EVEN);
 	}
 
@@ -129,51 +130,54 @@ public class StockMarketService {
 	 * indicator and traded price.
 	 */
 	public void recordTrade(String symbol, Date timestamp, BigInteger quantity, BuyOrSell indicator, BigDecimal price) {
-		AbstractStock stock = findStockBySymbol(symbol);
-		if (stock == null) {
-			return;
-		}
+		BaseStock stock = findStockBySymbol(symbol);
+
+		checkPositive(price);
+		checkPositive(new BigDecimal(quantity));
+
 		TradeRecord record = new TradeRecord(symbol, timestamp, quantity, indicator, price);
 		stock.addTradeRecord(record);
 	}
 
 	/**
 	 * Gets the volume weighted stock price based on the trades in the 15
-	 * minutes. The result keeps precision scale is 0 and uses
+	 * minutes. The result keeps precision scale is 0 and applies
 	 * {@link BigDecimal#ROUND_HALF_EVEN}.
 	 * 
 	 * @param stock the stock to calculate.
 	 * @return the VolumeWeightedStockPrice in the last in 15 minutes.
 	 */
 	public BigDecimal getVolumeWeightedStockPrice(String symbol) {
-		AbstractStock stock = findStockBySymbol(symbol);
-		if (stock == null) {
-			return null;
-		}
+
+		BaseStock stock = findStockBySymbol(symbol);
+
 		BigDecimal result = BigDecimal.ZERO;
 		List<TradeRecord> tradeRecords = getTradeRecordsByTime(stock, 15);
 		if (tradeRecords.isEmpty()) {
-			throw new BusinessException(
-					"No trade record found in the last 15 minutes for the stock " + stock.getSymbol());
-		} else {
-			BigDecimal priceSum = BigDecimal.ZERO;
-			BigInteger quantitySum = BigInteger.ZERO;
-
-			for (TradeRecord record : tradeRecords) {
-
-				priceSum = priceSum.add(record.getPrice().multiply(new BigDecimal(record.getQuantity())));
-				quantitySum = quantitySum.add(record.getQuantity());
-			}
-			result = priceSum.divide(new BigDecimal(quantitySum), PERCISION_SCALE, 3);
+			return result;
 		}
+
+		BigDecimal priceSum = BigDecimal.ZERO;
+		BigInteger quantitySum = BigInteger.ZERO;
+
+		for (TradeRecord record : tradeRecords) {
+			BigDecimal price = record.getPrice();
+			checkPositive(price);
+			BigDecimal quatity = new BigDecimal(record.getQuantity());
+			checkPositive(quatity);
+
+			priceSum = priceSum.add(price.multiply(quatity));
+			quantitySum = quantitySum.add(record.getQuantity());
+		}
+		result = priceSum.divide(new BigDecimal(quantitySum), PRECISION_SCALE, 3);
 		return result.setScale(0, BigDecimal.ROUND_HALF_EVEN);
 
 	}
 
 	/**
 	 * Calculates the GBCE all share index value based on the prices of all the
-	 * stocks in the market service. The result keeps precision scale is 0 and
-	 * uses {@link BigDecimal#ROUND_HALF_EVEN}.
+	 * stocks in the market service. The result precision scale is 0 and applies
+	 * {@link BigDecimal#ROUND_HALF_EVEN}.
 	 * 
 	 * @return the GBCE all share index value, with 2 scale.
 	 */
@@ -182,18 +186,23 @@ public class StockMarketService {
 			throw new BusinessException(
 					"No any stock registered to this market in current. Please register stocks first.");
 		}
+
 		BigDecimal accumulate = BigDecimal.ONE;
-		for (AbstractStock stock : this.stockMap.values()) {
-			accumulate = accumulate.multiply(stock.getPrice());
-		}
 		int n = this.stockMap.size();
+
+		for (BaseStock stock : this.stockMap.values()) {
+			BigDecimal price = stock.getPrice();
+			checkPositive(price);
+			accumulate = accumulate.musltiply(price);
+		}
+
 		BigDecimal x = accumulate.divide(accumulate, BigDecimal.ROUND_HALF_EVEN);
 		BigDecimal temp = BigDecimal.ZERO;
 		BigDecimal e = new BigDecimal("0.1");
 
 		do {
 			temp = x;
-			x = x.add(accumulate.subtract(x.pow(n)).divide(new BigDecimal(n).multiply(x.pow(n - 1)), 2,
+			x = x.add(accumulate.subtract(x.pow(n)).divide(new BigDecimal(n).multiply(x.pow(n - 1)), PRECISION_SCALE,
 					BigDecimal.ROUND_HALF_EVEN));
 		} while (x.subtract(temp).abs().compareTo(e) > 0);
 
@@ -204,30 +213,18 @@ public class StockMarketService {
 	/**
 	 * Gets the trade records of the given stock in the last given minutes.
 	 * 
-	 * @param stock the {@link AbstractStock} to search
+	 * @param stock the {@link BaseStock} to search
 	 * @param minutes the range of the time to search
-	 * @return
+	 * @return a {@link TradeRecord}s matching the search criterion
 	 */
-	private List<TradeRecord> getTradeRecordsByTime(AbstractStock stock, int minutes) {
+	private List<TradeRecord> getTradeRecordsByTime(BaseStock stock, int minutes) {
 		List<TradeRecord> result = new ArrayList<TradeRecord>();
-		stock.getTradeRecords().sort(new Comparator<TradeRecord>() {
-
-			public int compare(TradeRecord recordA, TradeRecord recordB) {
-				if (recordA.getTimestamp().before(recordB.getTimestamp())) {
-					return 1;
-				} else if (recordA.getTimestamp().after(recordB.getTimestamp())) {
-					return -1;
-				}
-				return 0;
-			}
-		});
-
+		// TODO maybe better to build a trade record list in time order in
+		// future.
 		Date currentTime = new Date();
 		for (TradeRecord record : stock.getTradeRecords()) {
 			if (currentTime.getTime() - record.getTimestamp().getTime() <= 15 * 60 * 1000) {
 				result.add(record);
-			} else {
-				break;
 			}
 		}
 
@@ -236,14 +233,14 @@ public class StockMarketService {
 	}
 
 	/**
-	 * Finds the {@link AbstractStock} registered to this market with the given
+	 * Finds the {@link BaseStock} registered to this market with the given
 	 * symbol.
 	 * 
 	 * @param symbol the symbol of the stock to look up
-	 * @return the {@link AbstractStock} found
+	 * @return the {@link BaseStock} found
 	 */
-	private AbstractStock findStockBySymbol(String symbol) {
-		AbstractStock stock = null;
+	private BaseStock findStockBySymbol(String symbol) {
+		BaseStock stock = null;
 		if (this.stockMap.containsKey(symbol)) {
 			stock = this.stockMap.get(symbol);
 		} else {
@@ -251,6 +248,17 @@ public class StockMarketService {
 					"Cannot find the stock " + symbol + " in the market. Please register the stock first");
 		}
 		return stock;
+	}
+
+	/**
+	 * Validates the given value is a positive.
+	 * 
+	 * @param value the value to be checked
+	 */
+	private void checkPositive(BigDecimal value) {
+		if (value == null || BigDecimal.ZERO.compareTo(value) >= 0) {
+			throw new InvalidValueException("Found non-positive value: " + value);
+		}
 	}
 
 }
