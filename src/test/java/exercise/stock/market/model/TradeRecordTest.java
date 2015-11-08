@@ -44,8 +44,8 @@ public class TradeRecordTest {
 	 */
 	@Test
 	public void testSetAndGetStockSymbol(){
-		this.tradeRecord.setStockSymbol(TestUtils.TEST_SYMBOL);
-		Assert.assertEquals(TestUtils.TEST_SYMBOL, this.tradeRecord.getStockSymbol());
+		this.tradeRecord.setStockSymbol(TestUtils.PREFIX_STOCK_SYMBOL);
+		Assert.assertEquals(TestUtils.PREFIX_STOCK_SYMBOL, this.tradeRecord.getStockSymbol());
 	}
 	
 	/**

@@ -5,7 +5,7 @@ package exercises.stock.exceptions;
  * @author DMONEY
  *
  */
-public class InvalidPriceException extends RuntimeException {
+public class InvalidPriceException extends BusinessException {
 
 	/**
 	 * Serialization id.

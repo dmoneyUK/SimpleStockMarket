@@ -11,36 +11,39 @@ import exercises.stock.exceptions.InvalidPriceException;
 
 /**
  * A model class of stock.
+ * 
  * @author DMONEY
  *
  */
-public class Stock {
-	
-	/** The symbol of the stock. */
-	private String symbol;
-	
-	/** Type of the stock. */
-	private StockType type;
-	
-	/** The last dividend value */
-	private BigDecimal lastDividend;
+public class AbstractStock {
 
-	/** The fixed dividend value. */
-	private BigDecimal fixedDividend;
-	
+	/** The symbol of the stock. */
+	protected String symbol;
+
+	/** The last dividend value */
+	protected BigDecimal lastDividend;
+
 	/** The par value. */
-	private BigDecimal parValue;
-	
+	protected BigDecimal parValue;
+
 	/** The price of this stock. */
-	private BigDecimal price;
-	
-	/** A map of stocks and their trade records.*/
-	private List<TradeRecord> tradeRecords;
+	protected BigDecimal price;
+
+	/** A map of stocks and their trade records. */
+	protected List<TradeRecord> tradeRecords;
 
 	/**
-	 * Constructor.
+	 * @param symbol
+	 * @param lastDividend
+	 * @param parValue
+	 * @param price
+	 * @param tradeRecords
 	 */
-	public Stock() {
+	public AbstractStock(String symbol, BigDecimal lastDividend, BigDecimal parValue, BigDecimal price) {
+		this.symbol = symbol;
+		this.lastDividend = lastDividend;
+		this.parValue = parValue;
+		this.price = price;
 		this.tradeRecords = new ArrayList<TradeRecord>();
 	}
 
@@ -59,20 +62,6 @@ public class Stock {
 	}
 
 	/**
-	 * @return the type
-	 */
-	public StockType getType() {
-		return type;
-	}
-
-	/**
-	 * @param type the type to set
-	 */
-	public void setType(StockType type) {
-		this.type = type;
-	}
-
-	/**
 	 * @return the lastDividend
 	 */
 	public BigDecimal getLastDividend() {
@@ -84,20 +73,6 @@ public class Stock {
 	 */
 	public void setLastDividend(BigDecimal lastDividend) {
 		this.lastDividend = lastDividend;
-	}
-
-	/**
-	 * @return the fixedDividend
-	 */
-	public BigDecimal getFixedDividend() {
-		return fixedDividend;
-	}
-
-	/**
-	 * @param fixedDividend the fixedDividend to set
-	 */
-	public void setFixedDividend(BigDecimal fixedDividend) {
-		this.fixedDividend = fixedDividend;
 	}
 
 	/**
@@ -127,9 +102,10 @@ public class Stock {
 	public void setTradeRecords(List<TradeRecord> tradeRecords) {
 		this.tradeRecords = tradeRecords;
 	}
-	
+
 	/**
 	 * Adds a {@link TradeRecord} to the trade records of this stock.
+	 * 
 	 * @param tradeRecords the tradeRecords to set
 	 */
 	public void addTradeRecord(TradeRecord tradeRecord) {
@@ -147,11 +123,10 @@ public class Stock {
 	 * @param price the price to set
 	 */
 	public void setPrice(BigDecimal price) {
-		if(BigDecimal.ZERO.compareTo(price)>=0){
-			throw new InvalidPriceException(price + "is a invalid price for the stock "+this.symbol);
+		if (BigDecimal.ZERO.compareTo(price) >= 0) {
+			throw new InvalidPriceException(price + "is a invalid price for the stock " + this.symbol);
 		}
 		this.price = price;
 	}
-	
 
 }
