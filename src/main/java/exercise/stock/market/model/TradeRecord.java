@@ -5,12 +5,12 @@ import java.math.BigInteger;
 import java.util.Date;
 
 /**
- * A model class of trade record containing the trade information, like
- * timestamp, quantity of shares, buy or sell indicator and traded price
+ * A model class of trade record containing the trade information, like stock symbol,
+ * time stamp, quantity of shares, buy or sell indicator and trading price.
  */
 public class TradeRecord {
 
-	/** The stock symbol*/
+	/** The stock symbol. */
 	private String stockSymbol;
 	
 	/** The time stamp of this trade.*/

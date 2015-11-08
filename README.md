@@ -24,11 +24,26 @@ Precision
 
 Edge cases and Exceptions
 ========
-1.  "Price" and "Quantity" are checked to be a POSITIVE in calculation. If ZERO or Negative value will cause InvalidValueException.
-2.  It is not clear how to calculate the "Dividend" in the "P/E Ratio" formula. Assume it is same as the "Last Dividend" in the examples. Considering the first example has "LastDividend==0", define it is a NON-Negative number. And if it is ZERO, P/E Ratio will throw an BusinessException.
-3.	 Record Trade will throw InvalidValueException if a recorded has non-positive price or quantity;
-4.  Volume Weighted Stock Price will throw an InvalidValueException if any stock has NON-POSITIVE price or quantity.(It may not be a critical error in the formula, but it is weird to has a trade record with invalid price or quantity. So better to throw exception to alert) 
-5.  BusinessException will be thrown if try to manipulate a stock not exists in the market or register an existing stock again.
+######InvalidValueException
+Based on common knowledge, "Price" and "Quantity" should be POSITIVE. So, define InvalidValueException for the cases where ZERO or Negative values are found. Specifically, the cases listed below will get InvalidValueException:
+  *  In "Dividend Yield" calculation (Both of Common or Preferred stocks): "Price" is NON-POSITIVE;
+  *  In "P/E Ratio" calculation: "Price" is NON-POSITIVE;
+  *  In "Volume Weighted Stock Price" calculation: either "Price" or "Quantity" is NON-POSITIVE;(It may not be a critical error in the formula, but it is weird to have a trade record with an invalid price or quantity. So better to throw exception to alert.) 
+  *  In "GBCE All Share Index" calculation: any "Price" is NON-POSITIVE;
+  *  In "Record Trade": either "Price" or "Quantity" is NON-POSITIVE.
+
+2.  It is not clear how to calculate the "Dividend" in the "P/E Ratio" formula. Assume it is same as the "Last Dividend" in the examples and the "Dividend" should be a POSITIVE value. However, the first example shows "LastDividend==0". So, define it is as a NON-Negative number. And if it is ZERO, "P/E Ratio" calculation will throw an BusinessException.
+
+######BusinessException
+BusinessException will be used for the edge cases which are not related to calculation or the requirements are not cleared. Specifically, it will be used in the following scenarios:
+  *  Register an existing stock to the market service;
+  *  Unregister a stock which has not registered to the market service;
+  *  Cannot find the given stock symbol in the registered stock in the service;
+  *  When calculate "P/E Ratio" and the "Dividend" is NON-POSITIVE. It is not clear how to calculate the "Dividend" in the "P/E Ratio" formula. Assume it is same as the "Last Dividend" in the examples and the "Dividend" should be a POSITIVE value. However, the first example shows "LastDividend==0". Hence, throw BusinessException rather than InvalidValueException.
+  *  When calculate the "GBCE All Share Index" and if no any stock has registered to the market service;
+
+The idea of BusinessException is to let calling method to do further process.
+  
 
 
 

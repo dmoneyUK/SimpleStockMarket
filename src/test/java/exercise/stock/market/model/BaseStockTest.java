@@ -3,16 +3,12 @@ package exercise.stock.market.model;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-
 import exercise.stock.market.test.TestUtils;
-import exercises.stock.exceptions.InvalidValueException;
-
 import java.math.BigDecimal;
-
 import org.junit.Assert;
 
 /**
- * A test class for {@link CommonStock}.
+ * A test class for {@link BaseStock}.
  * 
  * @author DMONEY
  *
@@ -31,7 +27,7 @@ public class BaseStockTest {
 	 */
 	@Before
 	public void setUp() {
-		this.stock = TestUtils.getDefaultCommonStock();
+		this.stock = new CommonStock(TestUtils.PREFIX_STOCK_SYMBOL, BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO);
 	}
 
 	/**

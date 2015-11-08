@@ -43,7 +43,7 @@ public class StockMarketServiceTest {
 	 * <ul>
 	 * <li>call the {@link StockMarketService#registerStock(BaseStock)}
 	 * {@link StockMarketService#unregisterStock(String)}</li>
-	 * <li>verify that the give stock is registered and then unregistered
+	 * <li>verify that the give stock was registered and then unregistered
 	 * successfully without exception.</li>
 	 * </ul>
 	 */
@@ -53,6 +53,7 @@ public class StockMarketServiceTest {
 		this.service.registerStock(stock);
 		Assert.assertEquals(stock, this.service.getStockMap().get(TestUtils.TEST_COMMON_STOCK));
 		this.service.unregisterStock(TestUtils.TEST_COMMON_STOCK);
+		Assert.assertTrue(this.service.getStockMap().isEmpty());
 	}
 
 	/**
@@ -75,7 +76,8 @@ public class StockMarketServiceTest {
 	 * Tests for {@link StockMarketService#unregisterStock(String)} with a
 	 * non-existing stock symbol.
 	 * <ul>
-	 * <li>call the {@link StockMarketService#unregisterStock(String)}</li>
+	 * <li>call the {@link StockMarketService#unregisterStock(String)} without
+	 * register the stock</li>
 	 * <li>verify that a {@link BusinessException} was caught</li>
 	 * </ul>
 	 */
@@ -103,7 +105,6 @@ public class StockMarketServiceTest {
 		commonStock.setLastDividend(new BigDecimal(23));
 		BigDecimal result = this.service.getDividendYield(TestUtils.TEST_COMMON_STOCK, new BigDecimal(130));
 		Assert.assertEquals(new BigDecimal("0.177"), result);
-
 	}
 
 	/**
@@ -230,17 +231,18 @@ public class StockMarketServiceTest {
 		Assert.assertEquals(price, record.getPrice());
 		Assert.assertEquals(BuyOrSell.BUY, record.getIndicator());
 	}
-	
+
 	/**
 	 * Tests for {@link StockMarketService#recordTrade(String, Date, BigInteger,
 	 * BuyOrSell, BigDecimal).
 	 * <ul>
-	 * <li>call the {@link StockMarketService#recordTrade(String, Date,
-	 * BigInteger, BuyOrSell, BigDecimal) with price==-1</li>
+	 * <li>call the
+	 * {@link StockMarketService#recordTrade(String, Date, BigInteger, BuyOrSell, BigDecimal)
+	 * with price==-1</li>
 	 * <li>verify that an {@link InvalidValueException} is caught</li>
 	 * </ul>
 	 */
-	@Test(expected=InvalidValueException.class)
+	@Test(expected = InvalidValueException.class)
 	public void testRecordTrade_InvalidPrice() {
 		CommonStock stock = TestUtils.getDefaultCommonStock();
 		this.service.registerStock(stock);
@@ -248,17 +250,18 @@ public class StockMarketServiceTest {
 		BigDecimal price = new BigDecimal(-1);
 		this.service.recordTrade(TestUtils.TEST_COMMON_STOCK, new Date(), quantity, BuyOrSell.BUY, price);
 	}
-	
+
 	/**
 	 * Tests for {@link StockMarketService#recordTrade(String, Date, BigInteger,
 	 * BuyOrSell, BigDecimal).
 	 * <ul>
-	 * <li>call the {@link StockMarketService#recordTrade(String, Date,
-	 * BigInteger, BuyOrSell, BigDecimal) with quantity==0</li>
+	 * <li>call the
+	 * {@link StockMarketService#recordTrade(String, Date, BigInteger, BuyOrSell, BigDecimal)
+	 * with quantity==0</li>
 	 * <li>verify that an {@link InvalidValueException} is caught</li>
 	 * </ul>
 	 */
-	@Test(expected=InvalidValueException.class)
+	@Test(expected = InvalidValueException.class)
 	public void testRecordTrade_InvalidQuantity() {
 		CommonStock stock = TestUtils.getDefaultCommonStock();
 		this.service.registerStock(stock);
@@ -274,8 +277,8 @@ public class StockMarketServiceTest {
 	 * shares at the price 1235</li>
 	 * <li>record a TEST_COMMON_STOCK trade 12 minutes ago which sold 7890
 	 * shares at the price 1021</li>
-	 * <li>record a TEST_PREFERRED_STOCK trade 7 minutes ago which bought
-	 * 10000 shares at the price 3012</li>
+	 * <li>record a TEST_PREFERRED_STOCK trade 7 minutes ago which bought 10000
+	 * shares at the price 3012</li>
 	 * <li>record a TEST_COMMON_STOCK trade 16 minutes ago which bought 2400
 	 * shares at the price 1187</li>
 	 * <li>call the {@link StockMarketService#recordTrade(String, Date,
@@ -302,11 +305,11 @@ public class StockMarketServiceTest {
 		Assert.assertEquals(new BigDecimal(1222),
 				this.service.getVolumeWeightedStockPrice(TestUtils.TEST_COMMON_STOCK));
 	}
-	
+
 	/**
 	 * Tests for {@link StockMarketService#getVolumeWeightedStockPrice(String).
 	 * <ul>
-	 * <li>record only one trade 20 minutes ago </li>
+	 * <li>record only one trade 20 minutes ago</li>
 	 * <li>verify that the only the trade of TEST_COMMON_STOCK in the last 15
 	 * minutes were used and the result is correct</li>
 	 * </ul>
@@ -318,11 +321,9 @@ public class StockMarketServiceTest {
 		long startTime = new Date().getTime();
 		this.service.recordTrade(TestUtils.TEST_COMMON_STOCK, new Date(startTime - 20 * 1000 * 60),
 				new BigInteger("2400"), BuyOrSell.BUY, new BigDecimal(1187));
-		Assert.assertEquals(new BigDecimal(0),
-				this.service.getVolumeWeightedStockPrice(TestUtils.TEST_COMMON_STOCK));
+		Assert.assertEquals(new BigDecimal(0), this.service.getVolumeWeightedStockPrice(TestUtils.TEST_COMMON_STOCK));
 	}
 
-	
 	/**
 	 * Tests for {@link StockMarketService#getGBCEAllShareIndex().
 	 * <ul>
@@ -350,7 +351,7 @@ public class StockMarketServiceTest {
 		this.service.registerStock(preferStock2);
 		Assert.assertEquals(new BigDecimal(2972), this.service.getGBCEAllShareIndex());
 	}
-	
+
 	/**
 	 * Tests for {@link StockMarketService#getGBCEAllShareIndex().
 	 * <ul>
@@ -359,7 +360,7 @@ public class StockMarketServiceTest {
 	 * <li>verify that an {@link InvalidValueException} was caught</li>
 	 * </ul>
 	 */
-	@Test(expected=InvalidValueException.class)
+	@Test(expected = InvalidValueException.class)
 	public void testGBCEAllShareIndex_PriceZero() {
 		CommonStock commonStock1 = new CommonStock(TestUtils.TEST_COMMON_STOCK + 1, BigDecimal.ZERO, BigDecimal.ZERO,
 				new BigDecimal(1234));
@@ -372,7 +373,7 @@ public class StockMarketServiceTest {
 		this.service.registerStock(commonStock3);
 		this.service.getGBCEAllShareIndex();
 	}
-	
+
 	/**
 	 * Tests for {@link StockMarketService#getGBCEAllShareIndex().
 	 * <ul>
@@ -380,9 +381,9 @@ public class StockMarketServiceTest {
 	 * <li>verify that an {@link BusinessException} was caught</li>
 	 * </ul>
 	 */
-	@Test(expected=BusinessException.class)
+	@Test(expected = BusinessException.class)
 	public void testGBCEAllShareIndex_NoStock() {
-		Assert.assertEquals(BigDecimal.ZERO,this.service.getGBCEAllShareIndex());
+		Assert.assertEquals(BigDecimal.ZERO, this.service.getGBCEAllShareIndex());
 	}
 
 }

@@ -1,13 +1,9 @@
 package exercise.stock.market.test;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import exercise.stock.market.model.BaseStock;
 import exercise.stock.market.model.CommonStock;
 import exercise.stock.market.model.PreferredStock;
-import exercise.stock.market.model.TradeRecord;
+
 
 /**
  * A utility class for tests.
@@ -27,9 +23,9 @@ public class TestUtils {
 	public static final String TEST_PREFERRED_STOCK = PREFIX_STOCK_SYMBOL+"preferred";
 
 	/**
-	 * Gets a random BigDecimal value between 0 to 100,000.
+	 * Gets a random {@link BigDecimal} between 0 to 100,000.
 	 * 
-	 * @return
+	 * @return a {@link BigDecimal}
 	 */
 	public static BigDecimal getRamdamBigDecimal() {
 

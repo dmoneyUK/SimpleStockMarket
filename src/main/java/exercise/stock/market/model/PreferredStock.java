@@ -2,6 +2,11 @@ package exercise.stock.market.model;
 
 import java.math.BigDecimal;
 
+/**
+ * A class of the preferred stock.
+ * @author DMONEY
+ *
+ */
 public class PreferredStock extends BaseStock{
 
 	/** The fixed dividend value. */

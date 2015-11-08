@@ -1,7 +1,6 @@
 package exercise.stock.market.model;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * A class of the common stock.
