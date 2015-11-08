@@ -193,7 +193,7 @@ public class StockMarketService {
 		for (BaseStock stock : this.stockMap.values()) {
 			BigDecimal price = stock.getPrice();
 			checkPositive(price);
-			accumulate = accumulate.musltiply(price);
+			accumulate = accumulate.multiply(price);
 		}
 
 		BigDecimal x = accumulate.divide(accumulate, BigDecimal.ROUND_HALF_EVEN);
