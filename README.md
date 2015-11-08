@@ -1,7 +1,7 @@
-Super Simple Socket Market
+Super Simple Stock Market
 ======
 
-A simple socket market which manages a couple of stocks and provides the functions below:</br>
+A simple stock market which manages a couple of stocks and provides the functions below:</br>
 For a given stock,</br>
 i.   Given any price as input, calculate the dividend yield</br>
 ii.  Given any price as input, calculate the P/E Ratio</br>
