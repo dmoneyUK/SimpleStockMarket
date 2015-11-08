@@ -13,11 +13,12 @@ v.   Calculate the GBCE All Share Index using the geometric mean of prices for a
 Precision
 ========
 
-1.  BigDecimal are used to define most of the fields of numeric value, like price, dividend etc; This is mainly because: it is not clarified these values must be integer and BigDecimal is a bit easier to used in divide calculation.)
+1.  BigDecimal are used to define most of the fields with numeric value. ( This is mainly because: it is not clarified whether these values must be integer, and BigDecimal is more accurate in divide calculation for large numbers.) Before requirement is clarified, it would be better not to set to much restriction.
 2.  Since no requirements for the precision, define the precision as below:
   *  the divide calculation uses precision scale == 7;
   *  the "Dividend Yield" and "P/E Ratio" results have a precision scale == 3 (to present xx.x%);
   *  the "GBCE All Share Index" and "Volume Weighted Stock Price" results have a precision scale == 0 (based on the example date which are all integer)
+  *  BigDecimal.ROUND_HALF_EVEN is applied as rounding mode in divide calculation.
 
 
 	    
